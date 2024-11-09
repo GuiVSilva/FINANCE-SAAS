@@ -27,18 +27,13 @@ export const addTransaction = async (params: AddTransactionParams) => {
     throw new Error("Não autorizado");
   }
 
-  if (params.id) {
-    await db.transaction.update({
-      where: {
-        id: params.id,
-      },
-      data: { ...params, userId },
-    });
-  } else {
-    await db.transaction.create({
-      data: { ...params, userId },
-    });
-  }
+  await db.transaction.upsert({
+    update: { ...params, userId },
+    create: { ...params, userId },
+    where: {
+      id: params?.id ?? "",
+    },
+  });
 
   revalidatePath("/transactions");
 };
