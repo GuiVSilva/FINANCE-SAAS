@@ -15,6 +15,9 @@ const TransactionsPage = async () => {
   }
   const transactions = await db.transaction.findMany({
     where: { userId: userId },
+    orderBy: {
+      date: "desc",
+    },
   });
 
   const userCanAddTransaction = await canUserAddTransaction();
@@ -22,13 +25,16 @@ const TransactionsPage = async () => {
   return (
     <>
       <NavBar />
-      <div className="space-y-6 overflow-hidden p-6">
+      <div className="flex flex-col space-y-6 overflow-hidden p-6">
         <div className="flex w-full items-center justify-between">
           <h2 className="text-2xl font-bold">Transações</h2>
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
         </div>
-        <ScrollArea>
-          <DataTable columns={transactionsColumns} data={transactions} />
+        <ScrollArea className="h-full">
+          <DataTable
+            columns={transactionsColumns}
+            data={JSON.parse(JSON.stringify(transactions))}
+          />
         </ScrollArea>
       </div>
     </>
